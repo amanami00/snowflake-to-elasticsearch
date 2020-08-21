@@ -1,4 +1,4 @@
-# Lambda for move file from s3 to elasticsearch
+# Lambda for move data from s3 to elasticsearch
 
 * #### Set up a virtual Python environment
 
