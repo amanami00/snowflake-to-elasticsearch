@@ -6,7 +6,6 @@ import json
 
 success_folder = 'sf-success'
 error_folder = 'sf-error'
-index = '{ "index" : {} }\n'
 
 region = 'us-east-1'
 service = 'es'
@@ -26,16 +25,17 @@ def lambda_handler(event, context):
         json_data = file_obj['Body'].read()
         data = json_data.splitlines()
         finalData = ''
-        
 
         for line in data:
-            finalData += index
-            finalData += line.decode("utf-8") + '\n'
+            data = line.decode("utf-8")
+            _id = (json.loads(data))['sf_id']
+            finalData += '{ "index": {"_id": "' + _id + '"} }\n'
+            finalData += data + '\n'
 
         try:
             headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
             response = requests.post(
-                '<Elasticsearch Endpointhttps>/<index>/_bulk',
+                '<REPLACE ME - Elasticsearch https Endpoint>/<REPLACE ME - index>/_bulk',
                 auth=awsauth,
                 headers=headers,
                 data=finalData
@@ -55,6 +55,8 @@ def lambda_handler(event, context):
             move_file(file_bucket, destination, source, file_name)
             print(f'File has been successfully moved to {dest_folder} folder')
         except requests.exceptions.RequestException as e:
+            move_file(file_bucket, destination, source, file_name)
+            print(f'File has been successfully moved to {dest_folder} folder')
             print(e.message)
             exit(1)
 
